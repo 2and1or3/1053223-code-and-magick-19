@@ -1,3 +1,5 @@
+'use strict';
+
 var CLOUD_HEIGHT = 270;
 var CLOUD_WIDTH = 420;
 var CLOUD_X = 100;
@@ -17,16 +19,16 @@ var BAR_Y = CLOUD_HEIGHT + CLOUD_Y - TEXT_MARGIN_BOTTOM - FONT_HEIGHT * 2 - BAR_
 
 var text = 'Ура вы победили! Список результатов:';
 
-function wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight) {
-  var words = text.split(" ");
+function wrapText(context, textLine, marginLeft, marginTop, maxWidth, lineHeight) {
+  var words = textLine.split(' ');
   var countWords = words.length;
-  var line = "";
+  var line = '';
   for (var n = 0; n < countWords; n++) {
-    var testLine = line + words[n] + " ";
+    var testLine = line + words[n] + ' ';
     var testWidth = context.measureText(testLine).width;
     if (testWidth > maxWidth) {
       context.fillText(line, marginLeft, marginTop);
-      line = words[n] + " ";
+      line = words[n] + ' ';
       marginTop += lineHeight;
     } else {
       line = testLine;
@@ -35,7 +37,7 @@ function wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight) {
   context.fillText(line, marginLeft, marginTop);
 }
 
-var getMaxElement = function(arr) {
+var getMaxElement = function (arr) {
   var maxElement = arr[0];
 
   for (var i = 0; i < arr.length; i++) {
@@ -47,11 +49,11 @@ var getMaxElement = function(arr) {
   return maxElement;
 };
 
-var getRandom = function(max) {
+var getRandom = function (max) {
   return Math.floor(Math.random() * Math.floor(max));
-}
+};
 
-var setRectColor = function(ctx, player) {
+var setRectColor = function (ctx, player) {
   if (player === 'Вы') {
     ctx.fillStyle = 'red';
   } else {
@@ -59,12 +61,12 @@ var setRectColor = function(ctx, player) {
   }
 };
 
-var renderCloud = function(ctx, x, y, color) {
+var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
 };
 
-var renderStatistics = function(ctx, names, times) {
+window.renderStatistics = function (ctx, names, times) {
   renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, 'rgba(0, 0, 0, 0.7)');
   renderCloud(ctx, CLOUD_X, CLOUD_Y, 'white');
 
