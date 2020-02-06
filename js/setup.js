@@ -60,7 +60,6 @@ similarListElement.appendChild(fragment);
 document.querySelector('.setup-similar')
 .classList.remove('hidden');
 
-
 var setup = document.querySelector('.setup');
 var setupOpen = document.querySelector('.setup-open');
 var setupOpenImg = setupOpen.querySelector('img');
@@ -108,28 +107,28 @@ setupClose.addEventListener('keydown', function (evt) {
   }
 });
 
+var setColor = function (element, property, input, color) {
+  element.style[property] = color;
+  input.value = color;
+};
+
 var setupCoat = setup.querySelector('.setup-wizard .wizard-coat');
 var setupCoatData = setup.querySelector('input[name="coat-color"]');
 
 setupCoat.addEventListener('click', function () {
-  setupCoat.style.fill = COATS[getRandom(COATS.length)];
-  setupCoatData.value = setupCoat.style.fill;
+  setColor(setupCoat, 'fill', setupCoatData, COATS[getRandom(COATS.length)]);
 });
 
 var setupEyes = setup.querySelector('.setup-wizard .wizard-eyes');
 var setupEyesData = setup.querySelector('input[name="eyes-color"]');
 
 setupEyes.addEventListener('click', function () {
-  setupEyes.style.fill = EYES[getRandom(EYES.length)];
-  setupEyesData.value = setupEyes.style.fill;
+  setColor(setupEyes, 'fill', setupEyesData, EYES[getRandom(EYES.length)]);
 });
 
 var setupBall = setup.querySelector('.setup-fireball-wrap');
 var setupBallData = setupBall.querySelector('input[name="fireball-color"]');
 
 setupBall.addEventListener('click', function () {
-  var currentColor = FIRE_BALLS[getRandom(FIRE_BALLS.length)];
-
-  setupBall.style.backgroundColor = currentColor;
-  setupBallData.value = currentColor;
+  setColor(setupBall, 'backgroundColor', setupBallData, FIRE_BALLS[getRandom(FIRE_BALLS.length)]);
 });
