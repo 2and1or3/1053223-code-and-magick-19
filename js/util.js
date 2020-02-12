@@ -38,10 +38,17 @@
     return Math.floor(Math.random() * Math.floor(max + 1));
   };
 
+  var getPercentPositionX = function (absoluteChild) {
+    var parent = absoluteChild.offsetParent;
+
+    return ((absoluteChild.getBoundingClientRect().x + absoluteChild.offsetWidth / 2) / parent.offsetWidth) * 100;
+  };
+
   window.util = {
     wrapText: wrapText,
     getMaxElement: getMaxElement,
     getRandom: getRandom,
+    getPercentPositionX: getPercentPositionX,
     enterKey: ENTER_KEY,
     escKey: ESC_KEY
   };
