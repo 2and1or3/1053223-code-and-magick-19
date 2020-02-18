@@ -1,38 +1,15 @@
 'use strict';
 
 (function () {
-  var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-  var SECOND_NAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
   var COATS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var EYES = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIRE_BALLS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
   var WIZARDS_COUNT = 4;
 
-  var wizards = [];
-
-  var buildWizard = function (name, secondName, coat, eye) {
-    return {
-      name: name + ' ' + secondName,
-      coatColor: coat,
-      eyesColor: eye
-    };
-  };
-
-  for (var i = 0; i < WIZARDS_COUNT; i++) {
-    var randomName = NAMES[window.util.getRandom(NAMES.length - 1)];
-    var secondName = SECOND_NAMES[window.util.getRandom(SECOND_NAMES.length - 1)];
-    var coat = COATS[window.util.getRandom(COATS.length - 1)];
-    var eyes = EYES[window.util.getRandom(EYES.length - 1)];
-
-    var wizard = buildWizard(randomName, secondName, coat, eyes);
-    wizards.push(wizard);
-  }
-
   var similarWizardTemplate =
   document.querySelector('#similar-wizard-template').content
-  .querySelector('.setup-similar-item');
+    .querySelector('.setup-similar-item');
   var similarListElement = document.querySelector('.setup-similar-list');
-  var fragment = document.createDocumentFragment();
 
   var renderWizard = function (wizardData) {
     var wizardElement = similarWizardTemplate.cloneNode(true);
@@ -40,20 +17,38 @@
     var wizardCoat = wizardElement.querySelector('.wizard-coat');
     var wizardEyes = wizardElement.querySelector('.wizard-eyes');
     wizardName.textContent = wizardData.name;
-    wizardCoat.style.fill = wizardData.coatColor;
-    wizardEyes.style.fill = wizardData.eyesColor;
+    wizardCoat.style.fill = wizardData.colorCoat;
+    wizardEyes.style.fill = wizardData.colorEyes;
 
     return wizardElement;
   };
 
-  for (i = 0; i < wizards.length; i++) {
-    fragment.appendChild(renderWizard(wizards[i]));
-  }
+  var onError = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
 
-  similarListElement.appendChild(fragment);
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
 
-  document.querySelector('.setup-similar')
-  .classList.remove('hidden');
+  var onSuccessUpload = function (wizards) {
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < WIZARDS_COUNT; i++) {
+      fragment.appendChild(renderWizard(wizards[window.util.getRandom(wizards.length - 1)]));
+    }
+
+    similarListElement.appendChild(fragment);
+
+    document.querySelector('.setup-similar')
+      .classList.remove('hidden');
+  };
+
+  window.backend.load(onSuccessUpload, onError);
 
   var setColor = function (element, property, input, color) {
     element.style[property] = color;
@@ -61,6 +56,7 @@
   };
 
   var setup = document.querySelector('.setup');
+  var setupForm = setup.querySelector('.setup-wizard-form');
   var setupCoat = setup.querySelector('.setup-wizard .wizard-coat');
   var setupCoatData = setup.querySelector('input[name="coat-color"]');
 
@@ -80,5 +76,24 @@
 
   setupBall.addEventListener('click', function () {
     setColor(setupBall, 'backgroundColor', setupBallData, FIRE_BALLS[window.util.getRandom(FIRE_BALLS.length - 1)]);
+  });
+
+  var setupButton = setup.querySelector('.setup-submit');
+
+  var onSuccessSend = function () {
+    var initialText = setupButton.textContent;
+
+    var setupReset = function () {
+      setupButton.textContent = initialText;
+      setup.classList.add('hidden');
+    };
+
+    setupButton.textContent = 'Данные отправлены...';
+    setTimeout(setupReset, 1000);
+  };
+
+  setupForm.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(setupForm), onSuccessSend, onError);
+    evt.preventDefault();
   });
 })();
