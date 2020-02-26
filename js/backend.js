@@ -2,67 +2,54 @@
 
 (function () {
 
-  var URL_FROM = 'https://js.dump.academy/code-and-magick/data';
-  var URL_TO = 'https://js.dump.academy/code-and-magick';
+  var GET_URL = 'https://js.dump.academy/code-and-magick/data';
+  var POST_URL = 'https://js.dump.academy/code-and-magick';
   var statusCode = {
     OK: 200
   };
-  var TIMEOUT_IN_MS = 10000;
+  var TIMEOUT_IN_MS = 5000;
 
-  var formLoad = function (onLoad, onError) {
+  var makeRequest = function (success, error) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
       if (xhr.status === statusCode.OK) {
-        onLoad(xhr.response);
+        success(xhr.response);
       } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        error('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
     xhr.addEventListener('error', function () {
-      onError('Ошибка соединения');
+      error('Ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Превышено время выполнение запроса: ' + xhr.timeout + ' MS');
+      error('Превышено время выполнение запроса: ' + xhr.timeout + ' MS');
     });
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open('GET', URL_FROM);
-    xhr.send();
+    return xhr;
   };
 
-  var formSave = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+  var load = function (onLoad, onError) {
+    var request = makeRequest(onLoad, onError);
 
-    xhr.addEventListener('load', function () {
-      if (xhr.status === statusCode.OK) {
-        onLoad(xhr.response);
-      } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
+    request.open('GET', GET_URL);
+    request.send();
+  };
 
-    xhr.addEventListener('error', function () {
-      onError('Ошибка соединения');
-    });
+  var save = function (data, onLoad, onError) {
+    var request = makeRequest(onLoad, onError);
 
-    xhr.addEventListener('timeout', function () {
-      onError('Превышено время выполнение запроса: ' + xhr.timeout + ' MS');
-    });
-
-    xhr.timeout = TIMEOUT_IN_MS;
-
-    xhr.open('POST', URL_TO);
-    xhr.send(data);
+    request.open('POST', POST_URL);
+    request.send(data);
   };
 
   window.backend = {
-    load: formLoad,
-    save: formSave
+    load: load,
+    save: save
   };
 })();
