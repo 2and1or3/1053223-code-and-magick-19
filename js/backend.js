@@ -9,24 +9,24 @@
   };
   var TIMEOUT_IN_MS = 5000;
 
-  var makeRequest = function (success, error) {
+  var makeRequest = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
       if (xhr.status === statusCode.OK) {
-        success(xhr.response);
+        onSuccess(xhr.response);
       } else {
-        error('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
     xhr.addEventListener('error', function () {
-      error('Ошибка соединения');
+      onError('Ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      error('Превышено время выполнение запроса: ' + xhr.timeout + ' MS');
+      onError('Превышено время выполнение запроса: ' + xhr.timeout + ' MS');
     });
 
     xhr.timeout = TIMEOUT_IN_MS;

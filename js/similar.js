@@ -7,7 +7,7 @@
   var coatColor;
   var eyesColor;
 
-  var onError = function (errorMessage) {
+  var showErrorMessage = function (errorMessage) {
     var node = document.createElement('div');
     node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
     node.style.position = 'absolute';
@@ -25,7 +25,7 @@
     window.render(wizards);
   };
 
-  window.backend.load(onSuccessUpload, onError);
+  window.backend.load(onSuccessUpload, showErrorMessage);
 
   var setupForm = document.querySelector('.setup-wizard-form');
   var setupButton = setupForm.querySelector('.setup-submit');
@@ -43,7 +43,7 @@
   };
 
   setupForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(setupForm), onSuccessSend, onError);
+    window.backend.save(new FormData(setupForm), onSuccessSend, showErrorMessage);
     evt.preventDefault();
   });
 
