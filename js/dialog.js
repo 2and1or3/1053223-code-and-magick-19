@@ -7,16 +7,36 @@
   var setupClose = setup.querySelector('.setup-close');
   var setupMovePoint = setup.querySelector('.upload');
 
-
-  var startPosition = {
-    x: null,
-    y: null
+  var Coordinate = function (x, y) {
+    this.x = x;
+    this.y = y;
+    this.shiftX = null;
+    this.shiftY = null;
   };
 
+  Coordinate.prototype.setX = function (x) {
+    this.x = x;
+  };
+
+  Coordinate.prototype.setY = function (y) {
+    this.y = y;
+  };
+
+  Coordinate.prototype.setShiftY = function (y) {
+    this.shiftY = y;
+  };
+
+  Coordinate.prototype.setShiftX = function (x) {
+    this.shiftX = x;
+  };
+
+  var startPosition = new Coordinate(null, null);
+
   var refreshPosition = function () {
+
     if (!startPosition.x) {
-      startPosition.x = window.util.getPercentPositionX(setup);
-      startPosition.y = setup.getBoundingClientRect().y;
+      startPosition.setX(window.util.getPercentPositionX(setup));
+      startPosition.setY(setup.getBoundingClientRect().y);
     }
 
     setup.style.left = startPosition.x + '%';
@@ -70,10 +90,7 @@
   setupMovePoint.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    var startCoords = new Coordinate(evt.clientX, evt.clientY);
 
     var isDragged = false;
 
@@ -81,18 +98,14 @@
       moveEvt.preventDefault();
       isDragged = true;
 
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
+      startCoords.setShiftX(startCoords.x - moveEvt.clientX);
+      startCoords.setShiftY(startCoords.y - moveEvt.clientY);
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
+      startCoords.setX(moveEvt.clientX);
+      startCoords.setY(moveEvt.clientY);
 
-      setup.style.top = (setup.offsetTop - shift.y) + 'px';
-      setup.style.left = (setup.offsetLeft - shift.x) + 'px';
+      setup.style.top = (setup.offsetTop - startCoords.shiftY) + 'px';
+      setup.style.left = (setup.offsetLeft - startCoords.shiftX) + 'px';
     };
 
     var onMouseUp = function (upEvt) {
